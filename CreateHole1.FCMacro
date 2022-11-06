@@ -1,160 +1,132 @@
-# -*- coding: utf-8 -*-
-
-# Macro Begin: C:\Users\Torben\AppData\Roaming\FreeCAD\Macro\CreateHole1.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
-import FreeCAD
-import PartDesign
-import PartDesignGui
-import Sketcher
-
-def sketchName(number):
-    return f'Sketch{number:03d}'
-
-def grooveName(number):
-    return f'Groove{number:03d}'
-
-sketchName = sketchName(1)
-
 documentName = 'unifilter_lellit_anna_57mm_hole_pattern'
 
 document = App.getDocument(documentName)
-# Gui.runCommand('Std_DlgMacroRecord',0)
-# Gui.runCommand('PartDesign_NewSketch',0)
-# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern','Body','Origin.YZ_Plane.',0,-27.4924,-37.7)
-document.getObject('Body').newObject('Sketcher::SketchObject',sketchName)
 
-sketch = document.getObject(sketchName)
+def formatAs(unit,number):
+    return f'{number} {unit}'
 
-sketch.Support = (document.getObject('YZ_Plane'),[''])
-sketch.MapMode = 'FlatFace'
+def formatAsDeg(number):
+    return formatAs('deg', number)
 
-# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Body'), 0, 'Sketch001.')
-# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Sketch001')
-# tv = Show.TempoVis(App.ActiveDocument, tag= ActiveSketch.ViewObject.TypeId)
-# ActiveSketch.ViewObject.TempoVis = tv
-# if ActiveSketch.ViewObject.EditingWorkbench:
-#   tv.activateWorkbench(ActiveSketch.ViewObject.EditingWorkbench)
-# if ActiveSketch.ViewObject.HideDependent:
-#   tv.hide(tv.get_all_dependent(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Body'), 'Sketch001.'))
-# if ActiveSketch.ViewObject.ShowSupport:
-#   tv.show([ref[0] for ref in ActiveSketch.Support if not ref[0].isDerivedFrom("PartDesign::Plane")])
-# if ActiveSketch.ViewObject.ShowLinks:
-#   tv.show([ref[0] for ref in ActiveSketch.ExternalGeometry])
-# tv.sketchClipPlane(ActiveSketch, ActiveSketch.ViewObject.SectionView)
-# tv.hide(ActiveSketch)
-# del(tv)
-# del(ActiveSketch)
-# 
-# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Sketch001')
-# if ActiveSketch.ViewObject.RestoreCamera:
-#   ActiveSketch.ViewObject.TempoVis.saveCamera()
-#   if ActiveSketch.ViewObject.ForceOrtho:
-#     ActiveSketch.ViewObject.Document.ActiveView.setCameraType('Orthographic')
-# 
-# Gui.Selection.clearSelection()
-### Begin command Sketcher_ViewSection
-#sketch.ViewObject.TempoVis.sketchClipPlane(sketch)
-### End command Sketcher_ViewSection
-# Gui.runCommand('Sketcher_CreateLine',0)
-sketch.addGeometry(Part.LineSegment(App.Vector(0.000000,0.000000,0),App.Vector(-0.002389,1.002155,0)),False)
-sketch.addConstraint(Sketcher.Constraint('Coincident',0,1,-1,1)) 
-sketch.addConstraint(Sketcher.Constraint('PointOnObject',0,2,-2)) 
-# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern','Body','Sketch001.Edge1',0.008,0,0.799413,False)
-### Begin command Sketcher_ConstrainDistanceY
-sketch.addConstraint(Sketcher.Constraint('DistanceY',0,1,0,2,1.002155)) 
-document.Sketch001.setExpression('Constraints[2]', u'<<ss>>.ss_sheet_thickness')
-### End command Sketcher_ConstrainDistanceY
-# Gui.Selection.clearSelection()
-# Gui.runCommand('Sketcher_CreateLine',0)
-sketch.addGeometry(Part.LineSegment(App.Vector(-0.000000,1.000000,0),App.Vector(0.159322,1.004569,0)),False)
-sketch.addConstraint(Sketcher.Constraint('Coincident',1,1,0,2)) 
-sketch.addConstraint(Sketcher.Constraint('Horizontal',1)) 
-# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern','Body','Sketch001.Edge2',0.008,0.07726,1,False)
-### Begin command Sketcher_ConstrainDistanceX
-sketch.addConstraint(Sketcher.Constraint('DistanceX',1,1,1,2,0.159322)) 
-document.Sketch001.setExpression('Constraints[5]', u'<<ss>>.ss_hole_inner_diameter / 2')
-### End command Sketcher_ConstrainDistanceX
-# Gui.Selection.clearSelection()
-# Gui.runCommand('Sketcher_CreateLine',0)
-sketch.addGeometry(Part.LineSegment(App.Vector(0.150000,1.000000,0),App.Vector(0.164149,0.237046,0)),False)
-sketch.addConstraint(Sketcher.Constraint('Coincident',2,1,1,2)) 
-sketch.addConstraint(Sketcher.Constraint('Vertical',2)) 
-# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern','Body','Sketch001.Edge3',0.008,0.15,0.507368,False)
-### Begin command Sketcher_ConstrainDistanceY
-sketch.addConstraint(Sketcher.Constraint('DistanceY',2,2,2,1,0.762954)) 
-document.Sketch001.setExpression('Constraints[8]', u'<<ss>>.ss_hole_straight_length')
-### End command Sketcher_ConstrainDistanceY
-# Gui.Selection.clearSelection()
-# Gui.runCommand('Sketcher_ToggleConstruction',0)
-# Gui.runCommand('Sketcher_CreateLine',0)
-sketch.addGeometry(Part.LineSegment(App.Vector(0.150000,0.250000,0),App.Vector(0.152081,-0.006727,0)),True)
-sketch.addConstraint(Sketcher.Constraint('Coincident',3,1,2,2)) 
-sketch.addConstraint(Sketcher.Constraint('PointOnObject',3,2,-1)) 
-sketch.addConstraint(Sketcher.Constraint('Vertical',3)) 
-# Gui.runCommand('Sketcher_ToggleConstruction',0)
-# Gui.runCommand('Sketcher_CreateLine',0)
-sketch.addGeometry(Part.LineSegment(App.Vector(0.150000,0.250000,0),App.Vector(0.289656,0.002927,0)),False)
-sketch.addConstraint(Sketcher.Constraint('Coincident',4,1,2,2)) 
-sketch.addConstraint(Sketcher.Constraint('PointOnObject',4,2,-1)) 
-# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern','Body','Sketch001.Edge4',0.008,0.15,0.11878,False)
-# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern','Body','Sketch001.Edge5',0.008,0.251841,0.0676935,False)
-### Begin command Sketcher_ConstrainAngle
-sketch.addConstraint(Sketcher.Constraint('Angle',3,1,4,1,0.509440)) 
-document.Sketch001.setExpression('Constraints[14]', u'<<ss>>.ss_hole_angle')
-### End command Sketcher_ConstrainAngle
-# Gui.Selection.clearSelection()
-# Gui.runCommand('Sketcher_CreateLine',0)
-sketch.addGeometry(Part.LineSegment(App.Vector(0.266577,0.000000,0),App.Vector(0.000000,0.000000,0)),False)
-sketch.addConstraint(Sketcher.Constraint('Coincident',5,1,4,2)) 
-sketch.addConstraint(Sketcher.Constraint('Coincident',5,2,0,1)) 
+def formatAsMM(number):
+    return formatAs('mm', number)
 
-# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern').resetEdit()
+class HoleDefinition:
+    def __init__(self, totalDepth, innerDiameter, straightDepth, holeAngle):
+        self.totalDepth = totalDepth
+        self.innerDiameter = innerDiameter
+        self.straightDepth = straightDepth
+        self.holeAngle = holeAngle
+        self.innerRadius = innerDiameter / 2.0
 
-# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Sketch001')
-# tv = ActiveSketch.ViewObject.TempoVis
-# if tv:
-#   tv.restore()
-# ActiveSketch.ViewObject.TempoVis = None
-# del(tv)
-# del(ActiveSketch)
-# 
-# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern','Body','Sketch001.')
+    def OutputHoleAngle(self):
+        return formatAsDeg(self.holeAngle)
 
-document.Sketch001.setExpression('.AttachmentOffset.Base.y', u'<<ss>>.ss_hole_distance + <<ss>>.ss_hole_inner_diameter')
-document.Sketch001.setExpression('.AttachmentOffset.Base.y', None)
-sketch.AttachmentOffset.Base.y = 1.050000
-App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Sketch001').AttachmentOffset = App.Placement(App.Vector(0.00,0.00,0.00),App.Rotation(App.Vector(0.00,0.00,1.00),0.00))
+    def OutputInnerRadius(self):
+        return formatAsMM(self.innerRadius)
 
-document.Sketch001.setExpression('.AttachmentOffset.Base.z', u'<<ss>>.ss_hole_distance + <<ss>>.ss_hole_inner_diameter')
-### Begin command PartDesign_Groove
+    def OutputTotalDepth(self):
+        return formatAsMM(self.totalDepth)
 
-grooveName = grooveName(1)
+    def OutputStraigthDepth(self):
+        return formatAsMM(self.straightDepth)
 
-document.getObject('Body').newObject('PartDesign::Groove',grooveName)
+class HolePosition:
+    def __init__(self, x, z):
+        self.x = x
+        self.z = z
 
-groove = document.getObject(grooveName)
+def generateSketchName(number):
+    return f'Sketch{number:03d}'
 
-groove.Profile = sketch
-groove.ReferenceAxis = (sketch,['V_Axis'])
-groove.Angle = 360.0
-groove.Midplane = 0
-groove.Reversed = 0
-sketch.Visibility = False
+def generateGrooveName(number):
+    return f'Groove{number:03d}'
+
+def createSketch(number):
+    sketchName = generateSketchName(number)
+
+    document.getObject('Body').newObject('Sketcher::SketchObject',sketchName)
+
+    return document.getObject(sketchName)
+
+def paintSketch(sketch, definition, position):
+    sketch.Support = (document.getObject('XZ_Plane'),[''])
+    sketch.MapMode = 'FlatFace'
+
+    sketch.addGeometry(Part.LineSegment(App.Vector(0.000000,-0.000000,0),App.Vector(-0.001979,1.008049,0)),False)
+    sketch.addConstraint(Sketcher.Constraint('Coincident',0,1,-1,1)) 
+    sketch.addConstraint(Sketcher.Constraint('PointOnObject',0,2,-2)) 
+
+    sketch.addConstraint(Sketcher.Constraint('DistanceY',0,1,0,2,1.008049)) 
+    sketch.setDatum(2,App.Units.Quantity(definition.OutputTotalDepth()))
+
+    sketch.addGeometry(Part.LineSegment(App.Vector(0.000000,1.000000,0),App.Vector(-0.223077,1.008049,0)),False)
+    sketch.addConstraint(Sketcher.Constraint('Coincident',1,1,0,2)) 
+    sketch.movePoint(1,2,App.Vector(-0.220129,1.002153,0),0)
+
+    sketch.addConstraint(Sketcher.Constraint('Horizontal',1))
+
+    sketch.addConstraint(Sketcher.Constraint('DistanceX',1,2,1,1,0.220129)) 
+
+    sketch.setDatum(5,App.Units.Quantity(definition.OutputInnerRadius()))
+
+    sketch.addGeometry(Part.LineSegment(App.Vector(-0.150000,1.000000,0),App.Vector(-0.139617,0.158150,0)),False)
+    sketch.addConstraint(Sketcher.Constraint('Coincident',2,1,1,2)) 
+    sketch.addConstraint(Sketcher.Constraint('Vertical',2)) 
+
+    sketch.addConstraint(Sketcher.Constraint('DistanceY',2,2,2,1,0.841850)) 
+    sketch.setDatum(8,App.Units.Quantity(definition.OutputStraigthDepth()))
+
+    sketch.addGeometry(Part.LineSegment(App.Vector(-0.150000,0.250000,0),App.Vector(-0.142565,-0.001041,0)),True)
+    sketch.addConstraint(Sketcher.Constraint('Coincident',3,1,2,2)) 
+    sketch.addConstraint(Sketcher.Constraint('PointOnObject',3,2,-1)) 
+    sketch.addConstraint(Sketcher.Constraint('Vertical',3)) 
+
+    sketch.addGeometry(Part.LineSegment(App.Vector(-0.150000,0.250000,0),App.Vector(-0.272368,-0.003883,0)),False)
+    sketch.addConstraint(Sketcher.Constraint('Coincident',4,1,2,2)) 
+    sketch.addConstraint(Sketcher.Constraint('PointOnObject',4,2,-1)) 
+
+    sketch.addConstraint(Sketcher.Constraint('Angle',4,1,3,1,0.455190)) 
+    sketch.setDatum(14,App.Units.Quantity(definition.OutputHoleAngle()))
+
+    sketch.addGeometry(Part.LineSegment(App.Vector(-0.266577,-0.000000,0),App.Vector(0.000000,-0.000000,0)),False)
+    sketch.addConstraint(Sketcher.Constraint('Coincident',5,1,4,2)) 
+    sketch.addConstraint(Sketcher.Constraint('Coincident',5,2,0,1)) 
+
+    sketch.AttachmentOffset.Base.x = position.x
+    sketch.AttachmentOffset.Base.z = position.z
+
+def createGroove(number):
+    grooveName = generateGrooveName(number)
+
+    document.getObject('Body').newObject('PartDesign::Groove',grooveName)
+
+    return document.getObject(grooveName)
+
+def paintGroove(sketch,groove):
+    groove.Profile = sketch
+    groove.ReferenceAxis = (sketch,['V_Axis'])
+    groove.Angle = 360.0
+    groove.Midplane = 0
+    groove.Reversed = 0
+    sketch.Visibility = False
+
+def createHole(number, holeDefinition, holePosition):
+    sketch = createSketch(number)
+
+    paintSketch(sketch,holeDefinition,holePosition)
+
+    groove = createGroove(number)
+
+    paintGroove(sketch,groove)
+
+basicHoleDefinition = HoleDefinition(1.0,0.3,0.75,25.0)
+
+holeList = []
+
+<Insert Holes here>
+
+for (holeNumber, holePosition) in holeList:
+    createHole(holeNumber, basicHoleDefinition, holePosition)
+
 document.getObject('Pad').Visibility = False
-# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.ShapeColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Pad').getLinkedObject(True).ViewObject,'ShapeColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.ShapeColor)
-# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.LineColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Pad').getLinkedObject(True).ViewObject,'LineColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.LineColor)
-# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.PointColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Pad').getLinkedObject(True).ViewObject,'PointColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.PointColor)
-# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.Transparency=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Pad').getLinkedObject(True).ViewObject,'Transparency',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.Transparency)
-# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.DisplayMode=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Pad').getLinkedObject(True).ViewObject,'DisplayMode',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Groove').ViewObject.DisplayMode)
-# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern').getObject('Body'), 0, 'Groove.')
-# Gui.Selection.clearSelection()
-### End command PartDesign_Groove
-# Gui.Selection.clearSelection()
-#groove.Angle = 360.000000
-#groove.ReferenceAxis = (sketch, ['V_Axis'])
-#groove.Midplane = 0
-#groove.Reversed = 0
-#document.recompute()
-#document.getObject('Pad').Visibility = False
-# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern').resetEdit()
-#sketch.Visibility = False
-# Macro End: C:\Users\Torben\AppData\Roaming\FreeCAD\Macro\CreateHole1.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
