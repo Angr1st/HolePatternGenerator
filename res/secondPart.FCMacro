@@ -1,0 +1,5 @@
+
+for (holeNumber, holePosition) in holeList:
+    createHole(holeNumber, basicHoleDefinition, holePosition)
+
+document.getObject('Pad').Visibility = False
