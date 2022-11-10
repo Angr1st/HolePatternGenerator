@@ -1,4 +1,4 @@
-use std::{fs::File, io::BufReader, path::Path, error::Error, fmt::Display};
+use std::{fs::File, io::{BufReader, LineWriter, Write, BufRead}, path::Path, error::Error, fmt::Display};
 
 use clap::{Parser, command};
 use serde::{Serialize, Deserialize};
@@ -16,7 +16,9 @@ struct Config {
     plate_diameter:f64,
     distance_from_edge:f64,
     padding_distance_from_edge:f64,
-    target_file_name:String
+    target_file_name:String,
+    first_part_of_macro_file: String,
+    second_part_of_macro_file: String
 }
 
 #[derive(PartialEq, Eq, Clone)]
@@ -35,13 +37,13 @@ struct HolePosition {
 impl HolePosition {
     fn new(x:f64, z:f64) -> HolePosition {
         if x == 0.0 && z == 0.0 {
-            return HolePosition::create_center()
+            HolePosition::create_center()
         }
         else if x == 0.0 || z == 0.0 {
-            return HolePosition { x, z, hole_type: HoleType::Axes }
+            HolePosition { x, z, hole_type: HoleType::Axes }
         }
         else {
-            return HolePosition { x, z, hole_type: HoleType::Area }
+            HolePosition { x, z, hole_type: HoleType::Area }
         }
     }
 
@@ -51,30 +53,21 @@ impl HolePosition {
 
     fn mirror(&self) -> Option<HolePosition> {
         if self.hole_type == HoleType::Center {
-            return None
+            None
         }
-        Some(HolePosition { x: self.x * - 1.0, z: self.z * - 1.0, hole_type: self.hole_type.clone() })
-    }
-
-    fn mirror_x(&self) -> Option<HolePosition> {
-        if self.hole_type == HoleType::Center {
-            return None
+        else {
+            Some(HolePosition { x: self.x * - 1.0, z: self.z * - 1.0, hole_type: self.hole_type.clone() })
         }
-        Some(HolePosition { x: self.x * - 1.0, z: self.z, hole_type: self.hole_type.clone() })
-    }
-
-    fn mirror_z(&self) -> Option<HolePosition> {
-        if self.hole_type == HoleType::Center {
-            return None
-        }
-        Some(HolePosition { x: self.x, z: self.z * - 1.0, hole_type: self.hole_type.clone() })
+       
     }
 
     fn rotate(&self) -> Option<HolePosition> {
         if self.hole_type == HoleType::Center {
-            return None
+            None
         }
-        Some(HolePosition { x: self.z, z: self.x, hole_type: self.hole_type.clone() })
+        else {
+            Some(HolePosition { x: self.z, z: self.x, hole_type: self.hole_type.clone() })
+        }
     }
 }
 
@@ -113,6 +106,17 @@ fn insert_hole(i: i32, j: i32, hole_distance: f64, holes: &mut Vec<HolePosition>
     }
 }
 
+fn create_line_writer(file_name:String) -> Result<LineWriter<File>, Box<dyn Error>> {
+    let file = File::options().read(false).write(true).create(true).open(file_name)?;
+    Ok(LineWriter::new(file))
+}
+
+fn load_file_content(file_name:String) -> Result<BufReader<File>,Box<dyn Error>> {
+    let file = File::open(file_name)?;
+
+    Ok(BufReader::new(file))
+}
+
 fn main() -> Result<(),Box<dyn Error>> {
     let cli = Cli::parse();
 
@@ -138,8 +142,26 @@ fn main() -> Result<(),Box<dyn Error>> {
         }
     }
 
+    let mut line_writer = create_line_writer(config.target_file_name)?;
+
+    let first_part_file = load_file_content(config.first_part_of_macro_file)?;
+
+    for line in first_part_file.lines() {
+        if let Ok(l) = line {
+            writeln!(line_writer,"{}",l)?;
+        }
+    }
+
     for hp in holes.iter().enumerate() {
-        println!("holeList.append(({},{}))",hp.0, hp.1)
+        writeln!(line_writer,"holeList.append(({},{}))",hp.0, hp.1)?;
+    }
+
+    let second_part_file = load_file_content(config.second_part_of_macro_file)?;
+
+    for line in second_part_file.lines() {
+        if let Ok(l) = line {
+            writeln!(line_writer,"{}",l)?;
+        }
     }
 
     Ok(())
