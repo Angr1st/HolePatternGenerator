@@ -5,6 +5,6 @@
     "distance_from_edge" : 0.3,
     "padding_distance_from_edge": 0.85,
     "target_file_name": "holePatternCreation.FCMacro",
-    "first_part_of_macro_file" : "firstPart.FCMacro",
-    "second_part_of_macro_file": "secondPart.FCMacro"
+    "first_part_of_macro_file" : "res/firstPart.FCMacro",
+    "second_part_of_macro_file": "res/secondPart.FCMacro"
 }
