@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+
+# Macro Begin: C:\Users\Torben\AppData\Roaming\FreeCAD\Macro\HoleWithoutExpression.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
+import FreeCAD
+import PartDesign
+import PartDesignGui
+import Sketcher
+
 documentName = 'unifilter_lellit_anna_57mm_hole_pattern'
 
 document = App.getDocument(documentName)
