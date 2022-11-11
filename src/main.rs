@@ -1,12 +1,44 @@
 use std::{fs::File, io::{BufReader, LineWriter, Write, BufRead}, path::Path, error::Error, fmt::Display};
 
-use clap::{Parser, command};
+use clap::{Parser, command, ValueEnum};
 use serde::{Serialize, Deserialize};
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum Quadrants {
+    One = 1,
+    Two = 2,
+    Three = 3,
+    Four = 4
+}
+
+impl Quadrants {
+    fn determine(x: f64, z: f64) -> Option<Quadrants> {
+        if x > 0.0 && z >= 0.0 {
+            Some(Quadrants::One)
+        }
+        else if x <= 0.0 && z > 0.0 {
+            Some(Quadrants::Two)
+        }
+        else if x < 0.0 && z <= 0.0 {
+            Some(Quadrants::Three)
+        }
+        else if x >= 0.0 && z < 0.0 {
+            Some(Quadrants::Four)
+        }
+        else {
+            None
+        }
+    }
+}
 
 #[derive(Parser)]
 #[command(author, version, about, long_about=None)]
 struct Cli {
-    config_path:String
+    #[arg(short)]
+    config_path:String,
+    /// How many quadrants to compute
+    #[arg(value_enum,short)]
+    quadrants:Quadrants
 }
 
 #[derive(Serialize,Deserialize)]
@@ -24,8 +56,17 @@ struct Config {
 #[derive(PartialEq, Eq, Clone)]
 enum HoleType {
     Center,
-    Axes,
-    Area
+    Axes(Quadrants),
+    Area(Quadrants)
+}
+
+impl HoleType {
+    fn determine(x: f64, z: f64) -> HoleType {
+        if x == 0.0 && z == 0.0 {
+            return HoleType::Center;
+        }
+        todo!()
+    }
 }
 
 struct HolePosition {
@@ -43,7 +84,8 @@ impl HolePosition {
             HolePosition { x, z, hole_type: HoleType::Axes }
         }
         else {
-            HolePosition { x, z, hole_type: HoleType::Area }
+            let quadrant = Quadrants::determine(x, z).expect("X and Z should not be both zero!");
+            HolePosition { x, z, hole_type: HoleType::Area(quadrant) }
         }
     }
 
@@ -63,6 +105,9 @@ impl HolePosition {
 
     fn rotate(&self) -> Option<HolePosition> {
         if self.hole_type == HoleType::Center {
+            None
+        }
+        else if self.x == self.z {
             None
         }
         else {
@@ -89,12 +134,32 @@ fn read_config_from_file<P: AsRef<Path>>(path: P) -> Result<Config, Box<dyn Erro
     Ok(u)
 }
 
-fn insert_hole(i: i32, j: i32, hole_distance: f64, holes: &mut Vec<HolePosition>) {
-    let holeposition = HolePosition::new(i as f64 * hole_distance ,j as f64 * hole_distance);
-    let mirrored_opt = holeposition.mirror();
-    let rotated_opt = holeposition.rotate();
-    let mirrored_rotated_opt = holeposition.mirror().and_then(|m| m.rotate());
-    holes.push(holeposition);
+fn quadrants_check(hole_position: &HolePosition, quadrant_setting:Quadrants, quadrant: Quadrants) -> Option<HolePosition> {
+    if quadrant <= quadrant_setting {
+        return match quadrant {
+            Quadrants::One => None,
+            Quadrants::Two =>  hole_position.mirror(),
+            Quadrants::Three => hole_position.rotate(),
+            Quadrants::Four => hole_position.mirror().and_then(|m| m.rotate())
+        }
+    }
+    return None;
+}
+
+fn insert_hole(x: f64, hole_distance: f64, distance_from_edge: f64, distance_to_edge: f64, holes: &mut Vec<HolePosition>, quadrants:Quadrants) -> bool {
+    let z = j as f64 * hole_distance;
+    //x is the hole position 
+    //distance from edge is the minimum distance from the edge for a hole central point
+    //distance_to_edge is the distance to the edge of the cirle at this x height
+    if z - distance_from_edge > distance_to_edge {
+        return false;
+    }
+    let hole_position = HolePosition::new(x,z);
+    let mirrored_opt = quadrants_check(&hole_position, quadrants, Quadrants::Two);
+    let rotated_opt = quadrants_check(&hole_position, quadrants, Quadrants::Three);
+    let mirrored_rotated_opt = quadrants_check(&hole_position, quadrants, Quadrants::Four);
+    holes.push(hole_position);
+
     if let Some(mirrored) = mirrored_opt {
         holes.push(mirrored);
     }
@@ -104,6 +169,7 @@ fn insert_hole(i: i32, j: i32, hole_distance: f64, holes: &mut Vec<HolePosition>
     if let Some(mirrored_rotated) = mirrored_rotated_opt {
         holes.push(mirrored_rotated);
     }
+    return true;
 }
 
 fn create_line_writer(file_name:String) -> Result<LineWriter<File>, Box<dyn Error>> {
@@ -131,15 +197,20 @@ fn main() -> Result<(),Box<dyn Error>> {
     //compute distance between 2 holes center points
     let hole_distance = config.hole_distance + config.hole_diameter;
     //compute the amount of holes 
-    let hole_amount = padded_plate_radius / hole_distance;
+    let max_hole_amount = padded_plate_radius / hole_distance;
 
-    let r_hole_amount = hole_amount.floor() as i32;
+    let r_max_hole_amount = max_hole_amount.floor() as i32;
 
-    for i in 0..=r_hole_amount {
-        //insert_hole(i,0, hole_distance, &mut holes);
-        for j in 0..=r_hole_amount {
-            insert_hole(i, j, hole_distance, &mut holes)
-        }
+    for i in 0..=r_max_hole_amount {
+        let x = i as f64 * hole_distance;
+        //calculate the distance to the edge of the circle at this x height
+        //arccos(x/r) = radiants (Angle) -> radius * sin(angle)
+        let angle_from_center = (x / plate_radius).acos();
+        let distance_to_edge = (angle_from_center).sin() * plate_radius;
+
+        println!("Angle from Center in radiants: {}; Distance to edge at x: {} is {}", angle_from_center, x, distance_to_edge);
+
+        insert_hole(x, hole_distance,config.distance_from_edge,distance_to_edge, &mut holes, cli.quadrants);
     }
 
     let mut line_writer = create_line_writer(config.target_file_name)?;
