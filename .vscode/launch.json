@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'hole_pattern_generator'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=hole_pattern_generator",
+                    "--package=hole_pattern_generator"
+                ],
+                "filter": {
+                    "name": "hole_pattern_generator",
+                    "kind": "bin"
+                }
+            },
+            "args": ["-c","C:/Users/Torben/source/repos/Rust/hole_pattern_generator/config.json", "-q", "four"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'hole_pattern_generator'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=hole_pattern_generator",
+                    "--package=hole_pattern_generator"
+                ],
+                "filter": {
+                    "name": "hole_pattern_generator",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
