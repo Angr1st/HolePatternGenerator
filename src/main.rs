@@ -69,6 +69,14 @@ impl HoleType {
     }
 }
 
+#[derive(PartialEq, Eq, Clone)]
+enum HoleReplicationMethod {
+    Mirror,
+    MirrorX,
+    MirrorXRotate,
+    Rotate
+}
+
 struct HolePosition {
     x:f64,
     z:f64,
@@ -80,12 +88,22 @@ impl HolePosition {
         if x == 0.0 && z == 0.0 {
             HolePosition::create_center()
         }
-        else if x == 0.0 || z == 0.0 {
-            HolePosition { x, z, hole_type: HoleType::Axes }
-        }
         else {
             let quadrant = Quadrants::determine(x, z).expect("X and Z should not be both zero!");
-            HolePosition { x, z, hole_type: HoleType::Area(quadrant) }
+            if x == 0.0 || z == 0.0 {
+                HolePosition { x, z, hole_type: HoleType::Axes(quadrant) }
+            }
+            else {     
+                HolePosition { x, z, hole_type: HoleType::Area(quadrant) }
+            }
+        }
+    }
+
+    fn get_hole_quadrant(&self) -> Option<Quadrants> {
+        return match self.hole_type {
+            HoleType::Center => None,
+            HoleType::Area(q) => Some(q),
+            HoleType::Axes(q) => Some(q)
         }
     }
 
@@ -98,20 +116,34 @@ impl HolePosition {
             None
         }
         else {
-            Some(HolePosition { x: self.x * - 1.0, z: self.z * - 1.0, hole_type: self.hole_type.clone() })
+            Some(HolePosition::new( self.x * - 1.0, self.z * - 1.0))
         }
-       
+    }
+
+    fn mirror_x(&self) -> Option<HolePosition> {
+        if self.hole_type == HoleType::Center {
+            None
+        }
+        else {
+            Some(HolePosition::new(self.x * - 1.0, self.z))
+        }
+    }
+
+    fn mirror_x_rotate(&self) -> Option<HolePosition> {
+        if self.hole_type == HoleType::Center {
+            None
+        }
+        else {
+            self.mirror_x().and_then(|hp| hp.rotate())
+        }
     }
 
     fn rotate(&self) -> Option<HolePosition> {
         if self.hole_type == HoleType::Center {
             None
         }
-        else if self.x == self.z {
-            None
-        }
         else {
-            Some(HolePosition { x: self.z, z: self.x, hole_type: self.hole_type.clone() })
+            Some(HolePosition::new( self.z, self.x))
         }
     }
 }
@@ -134,30 +166,39 @@ fn read_config_from_file<P: AsRef<Path>>(path: P) -> Result<Config, Box<dyn Erro
     Ok(u)
 }
 
-fn quadrants_check(hole_position: &HolePosition, quadrant_setting:Quadrants, quadrant: Quadrants) -> Option<HolePosition> {
-    if quadrant <= quadrant_setting {
-        return match quadrant {
-            Quadrants::One => None,
-            Quadrants::Two =>  hole_position.mirror(),
-            Quadrants::Three => hole_position.rotate(),
-            Quadrants::Four => hole_position.mirror().and_then(|m| m.rotate())
+fn quadrants_check(hole_position: &HolePosition, quadrant_setting:Quadrants) -> Option<HolePosition> {
+    if let Some(quadrant) = hole_position.get_hole_quadrant() {
+        if quadrant <= quadrant_setting {
+
+            return match hole_replication {
+                HoleReplicationMethod::Mirror => hole_position.mirror(),
+                HoleReplicationMethod::Rotate => hole_position.rotate(),
+                HoleReplicationMethod::MirrorX => hole_position.mirror_x(),
+                HoleReplicationMethod::MirrorXRotate => hole_position.mirror_x_rotate() 
+            }
         }
     }
     return None;
 }
 
-fn insert_hole(x: f64, hole_distance: f64, distance_from_edge: f64, distance_to_edge: f64, holes: &mut Vec<HolePosition>, quadrants:Quadrants) -> bool {
-    let z = j as f64 * hole_distance;
+fn insert_hole(i:i32, x: f64, hole_distance: f64, distance_from_edge: f64, distance_to_edge: f64, holes: &mut Vec<HolePosition>, quadrants:Quadrants) -> bool {
+    if i == 0 {
+        holes.push(HolePosition::create_center());
+        return true;
+    }
+    
+    let z = i as f64 * hole_distance;
     //x is the hole position 
     //distance from edge is the minimum distance from the edge for a hole central point
     //distance_to_edge is the distance to the edge of the cirle at this x height
     if z - distance_from_edge > distance_to_edge {
         return false;
     }
+
     let hole_position = HolePosition::new(x,z);
-    let mirrored_opt = quadrants_check(&hole_position, quadrants, Quadrants::Two);
-    let rotated_opt = quadrants_check(&hole_position, quadrants, Quadrants::Three);
-    let mirrored_rotated_opt = quadrants_check(&hole_position, quadrants, Quadrants::Four);
+    let mirrored_opt = quadrants_check(&hole_position, quadrants);
+    let rotated_opt = quadrants_check(&hole_position, quadrants);
+    let mirrored_rotated_opt = quadrants_check(&hole_position, quadrants);
     holes.push(hole_position);
 
     if let Some(mirrored) = mirrored_opt {
