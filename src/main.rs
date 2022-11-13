@@ -60,15 +60,6 @@ enum HoleType {
     Area(Quadrants)
 }
 
-impl HoleType {
-    fn determine(x: f64, z: f64) -> HoleType {
-        if x == 0.0 && z == 0.0 {
-            return HoleType::Center;
-        }
-        todo!()
-    }
-}
-
 #[derive(PartialEq, Eq, Clone)]
 enum HoleReplicationMethod {
     Mirror,
@@ -77,6 +68,7 @@ enum HoleReplicationMethod {
     Rotate
 }
 
+#[derive(Clone)]
 struct HolePosition {
     x:f64,
     z:f64,
@@ -166,51 +158,71 @@ fn read_config_from_file<P: AsRef<Path>>(path: P) -> Result<Config, Box<dyn Erro
     Ok(u)
 }
 
-fn quadrants_check(hole_position: &HolePosition, quadrant_setting:Quadrants) -> Option<HolePosition> {
-    if let Some(quadrant) = hole_position.get_hole_quadrant() {
-        if quadrant <= quadrant_setting {
+fn quadrants_check(hole_position: &HolePosition, quadrant_setting:Quadrants, hole_replication_method: HoleReplicationMethod) -> Option<HolePosition> {
+    let new_hole_opt = match hole_replication_method {
+        HoleReplicationMethod::Mirror => hole_position.mirror(),
+        HoleReplicationMethod::Rotate => hole_position.rotate(),
+        HoleReplicationMethod::MirrorX => hole_position.mirror_x(),
+        HoleReplicationMethod::MirrorXRotate => hole_position.mirror_x_rotate() 
+    };
 
-            return match hole_replication {
-                HoleReplicationMethod::Mirror => hole_position.mirror(),
-                HoleReplicationMethod::Rotate => hole_position.rotate(),
-                HoleReplicationMethod::MirrorX => hole_position.mirror_x(),
-                HoleReplicationMethod::MirrorXRotate => hole_position.mirror_x_rotate() 
-            }
+    if let Some(quadrant) = new_hole_opt.as_ref().and_then(|hp| hp.get_hole_quadrant()) {
+        if quadrant <= quadrant_setting {
+            return new_hole_opt;
         }
     }
+    
     return None;
 }
 
-fn insert_hole(i:i32, x: f64, hole_distance: f64, distance_from_edge: f64, distance_to_edge: f64, holes: &mut Vec<HolePosition>, quadrants:Quadrants) -> bool {
+fn insert_hole(i:i32, x: f64, hole_distance: f64, distance_from_edge: f64, distance_to_edge: f64, holes: &mut Vec<HolePosition>, quadrants:Quadrants) {
     if i == 0 {
         holes.push(HolePosition::create_center());
-        return true;
+        return;
     }
     
-    let z = i as f64 * hole_distance;
-    //x is the hole position 
-    //distance from edge is the minimum distance from the edge for a hole central point
-    //distance_to_edge is the distance to the edge of the cirle at this x height
-    if z - distance_from_edge > distance_to_edge {
-        return false;
+    for j in 0..=i {
+        let z = j as f64 * hole_distance;
+        //x is the hole position 
+        //distance from edge is the minimum distance from the edge for a hole central point
+        //distance_to_edge is the distance to the edge of the cirle at this x height
+        if z - distance_from_edge > distance_to_edge {
+            return;
+        }
+
+        compute_insert_holes(x, z, i, j, quadrants, holes);
+
+        if j != 0 && j != i {
+            compute_insert_holes(x, -z, i, j, quadrants, holes);
+        }
     }
+}
 
+fn compute_insert_holes(x: f64, z: f64, i: i32, j: i32, quadrants: Quadrants, holes: &mut Vec<HolePosition>) {
     let hole_position = HolePosition::new(x,z);
-    let mirrored_opt = quadrants_check(&hole_position, quadrants);
-    let rotated_opt = quadrants_check(&hole_position, quadrants);
-    let mirrored_rotated_opt = quadrants_check(&hole_position, quadrants);
+    let mut mirrored_opt = None;
+    let mut rotated_opt = None;
+    if i == j {           
+        mirrored_opt = quadrants_check(&hole_position, quadrants, HoleReplicationMethod::Mirror);
+    }
+    else {
+        rotated_opt = quadrants_check(&hole_position, quadrants, HoleReplicationMethod::Rotate);
+    }
+    let mirrored_x_opt = quadrants_check(&hole_position, quadrants, HoleReplicationMethod::MirrorX);
+    let mirrored_x_rotated_opt = quadrants_check(&hole_position, quadrants, HoleReplicationMethod::MirrorXRotate);
     holes.push(hole_position);
-
     if let Some(mirrored) = mirrored_opt {
         holes.push(mirrored);
     }
     if let Some(rotated) = rotated_opt {
         holes.push(rotated);
     }
-    if let Some(mirrored_rotated) = mirrored_rotated_opt {
-        holes.push(mirrored_rotated);
+    if let Some(mirrored_x) = mirrored_x_opt {
+        holes.push(mirrored_x);
     }
-    return true;
+    if let Some(mirrored_x_rotated) = mirrored_x_rotated_opt {
+        holes.push(mirrored_x_rotated);
+    }
 }
 
 fn create_line_writer(file_name:String) -> Result<LineWriter<File>, Box<dyn Error>> {
@@ -251,7 +263,7 @@ fn main() -> Result<(),Box<dyn Error>> {
 
         println!("Angle from Center in radiants: {}; Distance to edge at x: {} is {}", angle_from_center, x, distance_to_edge);
 
-        insert_hole(x, hole_distance,config.distance_from_edge,distance_to_edge, &mut holes, cli.quadrants);
+        insert_hole(i, x, hole_distance,config.distance_from_edge,distance_to_edge, &mut holes, cli.quadrants);
     }
 
     let mut line_writer = create_line_writer(config.target_file_name)?;
