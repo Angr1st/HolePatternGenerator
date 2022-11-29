@@ -53,11 +53,30 @@ struct Config {
     second_part_of_macro_file: String
 }
 
+struct HoleDefinition {
+    total_depth:f64, 
+    inner_diameter:f64, 
+    straight_depth:f64, 
+    hole_angle:f64
+}
+
+impl Display for HoleDefinition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "basicHoleDefinition = HoleDefinition({}, {}, {}, {})", self.total_depth, self.inner_diameter, self.straight_depth, self.hole_angle)
+    }
+}
+
 #[derive(PartialEq, Eq, Clone)]
 enum HoleType {
     Center,
     Axes(Quadrants),
     Area(Quadrants)
+}
+
+impl Display for HoleType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!()
+    }
 }
 
 #[derive(PartialEq, Eq, Clone)]
@@ -142,7 +161,7 @@ impl HolePosition {
 
 impl Display for HolePosition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "HolePosition({},{})", self.x, self.z)
+        write!(f, "HolePosition({},{},{})", self.x, self.z, self.hole_type)
     }
 }
 
@@ -270,11 +289,20 @@ fn main() -> Result<(),Box<dyn Error>> {
 
     let first_part_file = load_file_content(config.first_part_of_macro_file)?;
 
+    let basic_hole_definition = HoleDefinition {
+        total_depth : 1.0,
+        inner_diameter : 0.3,
+        straight_depth : 0.75,
+        hole_angle : 25.0
+    };
+
     for line in first_part_file.lines() {
         if let Ok(l) = line {
             writeln!(line_writer,"{}",l)?;
         }
     }
+
+    writeln!(line_writer, "{}", basic_hole_definition)?;
 
     for hp in holes.iter().enumerate() {
         writeln!(line_writer,"holeList.append(({},{}))",hp.0, hp.1)?;
