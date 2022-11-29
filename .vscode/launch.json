@@ -19,7 +19,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["-c","C:/Users/Torben/source/repos/Rust/hole_pattern_generator/config.json", "-q", "four"],
+            "args": ["-c","./config.json", "-q", "one"],
             "cwd": "${workspaceFolder}"
         },
         {
