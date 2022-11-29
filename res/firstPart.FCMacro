@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Macro Begin: C:\Users\Torben\AppData\Roaming\FreeCAD\Macro\HoleWithoutExpression.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
 import FreeCAD
 import PartDesign
 import PartDesignGui
@@ -127,7 +126,5 @@ def createHole(number, holeDefinition, holePosition):
     groove = createGroove(number)
 
     paintGroove(sketch,groove)
-
-basicHoleDefinition = HoleDefinition(1.0,0.3,0.75,25.0)
 
 holeList = []
