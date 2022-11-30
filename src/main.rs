@@ -75,7 +75,23 @@ enum HoleType {
 
 impl Display for HoleType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        todo!()
+        match self {
+            Self::Center => write!(f, "CENTER"),
+            Self::Area(quadrant) =>
+                match quadrant {
+                    Quadrants::One => write!(f,"RIGHTTOP"),
+                    Quadrants::Two => write!(f,"RIGHTBOTTOM"),
+                    Quadrants::Three => write!(f,"LEFTBOTTOM"),
+                    Quadrants::Four => write!(f, "LEFTTOP")
+                },
+            Self::Axes(quadrant) =>
+                match quadrant {
+                    Quadrants::One => write!(f,"TOP"),
+                    Quadrants::Two => write!(f,"RIGHT"),
+                    Quadrants::Three => write!(f,"BOTTOM"),
+                    Quadrants::Four => write!(f, "LEFT")
+                }
+        }
     }
 }
 
@@ -161,7 +177,19 @@ impl HolePosition {
 
 impl Display for HolePosition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "HolePosition({},{},{})", self.x, self.z, self.hole_type)
+        write!(f, "HolePosition({},{},HoleType.{})", self.x, self.z, self.hole_type)
+    }
+}
+
+#[cfg(test)]
+mod hole_position_tests {
+    use crate::HolePosition;
+
+    #[test]
+    fn print_center_hole() {
+        let hole = HolePosition::new(0.0, 0.0);
+        let string_repsentation = format!("{}",hole);
+        assert_eq!(string_repsentation, "HolePosition(0,0,HoleType.CENTER)");
     }
 }
 
