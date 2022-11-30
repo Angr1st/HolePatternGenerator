@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Macro Begin: C:\Users\Torben\AppData\Roaming\FreeCAD\Macro\HoleWithoutExpression.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
+# Macro Begin: 
 import FreeCAD
 import PartDesign
 import PartDesignGui
 import Sketcher
+from enum import Enum
+
+HoleType = Enum('HoleType', ['CENTER', 'RIGHTTOP', 'RIGHTBOTTOM', 'LEFTBOTTOM', 'LEFTTOP', 'TOP', 'RIGHT', 'BOTTOM', 'LEFT'])
 
 documentName = 'unifilter_lellit_anna_57mm_hole_pattern'
 
@@ -39,10 +42,20 @@ class HoleDefinition:
     def OutputStraigthDepth(self):
         return formatAsMM(self.straightDepth)
 
+    def OutputInnerDiameter(self):
+        return formatAsMM(self.innerDiameter)
+
 class HolePosition:
-    def __init__(self, x, z):
-        self.x = x
-        self.z = z
+    def __init__(self, x, z, holeType):
+        self.X = x
+        self.Z = z
+        self.HoleType = holeType
+
+    def OutputX(self):
+        return formatAsMM(self.X)
+
+    def OutputZ(self):
+        return formatAsMM(self.Z)
 
 def generateSketchName(number):
     return f'Sketch{number:03d}'
@@ -56,6 +69,65 @@ def createSketch(number):
     document.getObject('Body').newObject('Sketcher::SketchObject',sketchName)
 
     return document.getObject(sketchName)
+
+def paintHolePlane(sketch, definition, holes):
+    sketch.Support = (document.getObject('XY_Plane'),[''])
+    sketch.MapMode = 'FlatFace'
+    
+    constraintNumber = 0
+    objectNumber = 0
+    #Complete Plane
+    sketch.addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),0.998513),False)
+    sketch.addConstraint(Sketcher.Constraint('Coincident',objectNumber,3,-1,1)) 
+    constraintNumber++
+    sketch.addConstraint(Sketcher.Constraint('Diameter',objectNumber,1.997026))
+    sketch.setDatum(constraintNumber,App.Units.Quantity('58.100000 mm'))
+    objectNumber++
+
+    def createCenterHole():
+        # Center Hole
+        sketch.addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),0.719121),False)
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('Coincident',objectNumber,3,0,3)) 
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('Diameter',objectNumber,1.438242)) 
+        sketch.setDatum(constraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+
+    def createHoleLeft(hole):
+        sketch.addGeometry(Part.Circle(App.Vector(-0.903611,0.001554,0),App.Vector(0,0,1),0.104209),False)
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('PointOnObject',constraintNumber,3,-1)) 
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('Diameter',constraintNumber,0.208418)) 
+        sketch.setDatum(5,App.Units.Quantity('0.300000 mm'))
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('DistanceX',constraintNumber,3,0,3,0.903611)) 
+        sketch.setDatum(6,App.Units.Quantity('1.000000 mm'))
+        #sketch.renameConstraint(6, u'Left')
+
+    def createHoleLeftTop(hole):
+        sketch.addGeometry(Part.Circle(App.Vector(-0.647308,0.643353,0),App.Vector(0,0,1),0.140588),False)
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('Diameter',objectNumber,0.281176)) 
+        sketch.setDatum(constraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('DistanceX',objectNumber,3,0,3,0.647308)) 
+        sketch.setDatum(constraintNumber,App.Units.Quantity(hole.OutputX()))
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,objectNumber,3,0.643353)) 
+        sketch.setDatum(constraintNumber,App.Units.Quantity(hole.OutputZ()))
+
+    def createHoleTop(hole):
+        sketch.addGeometry(Part.Circle(App.Vector(-0.006343,1.042262,0),App.Vector(0,0,1),0.179877),False)
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('PointOnObject',objectNumber,3,-2)) 
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('Diameter',objectNumber,0.359754)) 
+        sketch.setDatum(constraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        constraintNumber++
+        sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,objectNumber,3,1.042262)) 
+        sketch.setDatum(constraintNumber,App.Units.Quantity(hole.OutputZ()))
+        #sketch.renameConstraint(12, u'Top')
 
 def paintSketch(sketch, definition, position):
     sketch.Support = (document.getObject('XZ_Plane'),[''])
@@ -101,8 +173,8 @@ def paintSketch(sketch, definition, position):
     sketch.addConstraint(Sketcher.Constraint('Coincident',5,1,4,2)) 
     sketch.addConstraint(Sketcher.Constraint('Coincident',5,2,0,1)) 
 
-    sketch.AttachmentOffset.Base.x = position.x
-    sketch.AttachmentOffset.Base.z = position.z
+    sketch.AttachmentOffset.Base.x = position.X
+    sketch.AttachmentOffset.Base.z = position.Z
 
 def createGroove(number):
     grooveName = generateGrooveName(number)
