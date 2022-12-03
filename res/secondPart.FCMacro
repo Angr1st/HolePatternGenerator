@@ -1,5 +1,4 @@
 
-for (holeNumber, holePosition) in holeList:
-    createHole(holeNumber, basicHoleDefinition, holePosition)
+paintHolePlane(createSketch(1),basicHoleDefinition,holeList)
 
-document.getObject('Pad').Visibility = False
+#document.getObject('Pad').Visibility = False

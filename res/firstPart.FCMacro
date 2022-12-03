@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
+# Macro Begin: 
 import FreeCAD
 import PartDesign
 import PartDesignGui
 import Sketcher
+from enum import Enum
 
-documentName = 'unifilter_lellit_anna_57mm_hole_pattern'
+HoleType = Enum('HoleType', ['CENTER', 'RIGHTTOP', 'RIGHTBOTTOM', 'LEFTBOTTOM', 'LEFTTOP', 'TOP', 'RIGHT', 'BOTTOM', 'LEFT'])
+
+documentName = 'unifilter_lellit_anna_57mm_hole_pattern_v2'
 
 document = App.getDocument(documentName)
 
@@ -38,10 +42,25 @@ class HoleDefinition:
     def OutputStraigthDepth(self):
         return formatAsMM(self.straightDepth)
 
+    def OutputInnerDiameter(self):
+        return formatAsMM(self.innerDiameter)
+
 class HolePosition:
-    def __init__(self, x, z):
-        self.x = x
-        self.z = z
+    def __init__(self, x, z, holeType):
+        self.X = x
+        self.Z = z
+        self.HolePositionType = holeType
+
+    def OutputX(self):
+        return formatAsMM(self.X)
+
+    def OutputZ(self):
+        return formatAsMM(self.Z)
+
+class HolePlaneIterator:
+    def __init__(self):
+        self.ObjectNumber = 0
+        self.ConstraintNumber = 0
 
 def generateSketchName(number):
     return f'Sketch{number:03d}'
@@ -55,6 +74,145 @@ def createSketch(number):
     document.getObject('Body').newObject('Sketcher::SketchObject',sketchName)
 
     return document.getObject(sketchName)
+
+def paintHolePlane(sketch, definition, holes):
+    sketch.Support = (document.getObject('XY_Plane'),[''])
+    sketch.MapMode = 'FlatFace'
+    
+    hpi = HolePlaneIterator()
+    #Complete Plane
+    sketch.addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),0.998513),False)
+    sketch.addConstraint(Sketcher.Constraint('Coincident',hpi.ObjectNumber,3,-1,1)) 
+    hpi.ConstraintNumber += 1
+    sketch.addConstraint(Sketcher.Constraint('Diameter',hpi.ObjectNumber,1.997026))
+    sketch.setDatum(hpi.ConstraintNumber,App.Units.Quantity('58.100000 mm'))
+    hpi.ObjectNumber += 1
+
+    def createCenterHole(hpit):
+        # Center Hole
+        sketch.addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),0.719121),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Coincident',hpit.ObjectNumber,3,0,3)) 
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,1.438242)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+
+    def createHoleLeft(hpit,hole):
+        sketch.addGeometry(Part.Circle(App.Vector(-0.903611,0.001554,0),App.Vector(0,0,1),0.104209),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('PointOnObject',hpit.ObjectNumber,3,-1)) 
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,0.208418)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceX',hpit.ObjectNumber,3,0,3,0.903611)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputZ()))
+        #sketch.renameConstraint(6, u'Left')
+
+    def createHoleLeftTop(hpit,hole):
+        sketch.addGeometry(Part.Circle(App.Vector(-0.647308,0.643353,0),App.Vector(0,0,1),0.140588),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,0.281176)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceX',hpit.ObjectNumber,3,0,3,0.647308)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputZ()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,hpit.ObjectNumber,3,0.643353)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputX()))
+
+    def createHoleTop(hpit,hole):
+        sketch.addGeometry(Part.Circle(App.Vector(-0.006343,1.042262,0),App.Vector(0,0,1),0.179877),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('PointOnObject',hpit.ObjectNumber,3,-2)) 
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,0.359754)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,hpit.ObjectNumber,3,1.042262)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputX()))
+        #sketch.renameConstraint(12, u'Top')
+
+    def createHoleRightTop(hpit,hole):
+        sketch.addGeometry(Part.Circle(App.Vector(1.017571,0.952324,0),App.Vector(0,0,1),0.245674),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,0.491348)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceX',0,3,hpit.ObjectNumber,3,1.017571)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputZ()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,hpit.ObjectNumber,3,0.952324)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputX()))
+
+    def createHoleRight(hpit,hole):
+        sketch.addGeometry(Part.Circle(App.Vector(0.976061,-0.016243,0),App.Vector(0,0,1),0.271319),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('PointOnObject',hpit.ObjectNumber,3,-1)) 
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,0.542638)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceX',0,3,hpit.ObjectNumber,3,0.976061)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputZ()))
+        #sketch.renameConstraint(18, u'Right')
+
+    def createHoleRightBottom(hpit,hole):
+        sketch.addGeometry(Part.Circle(App.Vector(0.982979,-0.957137,0),App.Vector(0,0,1),0.179877),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,0.359754)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceY',hpit.ObjectNumber,3,0,3,0.957137)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputX()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceX',0,3,hpit.ObjectNumber,3,0.982979)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputZ()))
+
+    def createHoleBottom(hpit,hole):
+        sketch.addGeometry(Part.Circle(App.Vector(-0.006343,-1.012484,0),App.Vector(0,0,1),0.196899),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('PointOnObject',hpit.ObjectNumber,3,-2)) 
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,0.393798)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceY',hpit.ObjectNumber,3,0,3,1.012484)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputX()))
+
+    def createHoleLeftBottom(hpit,hole):
+        sketch.addGeometry(Part.Circle(App.Vector(-1.044094,-0.991729,0),App.Vector(0,0,1),0.179877),False)
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('Diameter',hpit.ObjectNumber,0.359754)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(definition.OutputInnerDiameter()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceY',hpit.ObjectNumber,3,0,3,0.991729)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputX()))
+        hpit.ConstraintNumber += 1
+        sketch.addConstraint(Sketcher.Constraint('DistanceX',hpit.ObjectNumber,3,0,3,1.044094)) 
+        sketch.setDatum(hpit.ConstraintNumber,App.Units.Quantity(hole.OutputZ()))
+
+    for hole in holes:
+        if hole.HolePositionType == HoleType.CENTER:
+            createCenterHole(hpi)
+        elif hole.HolePositionType == HoleType.RIGHTTOP:
+            createHoleRightTop(hpi,hole)
+        elif hole.HolePositionType == HoleType.RIGHTBOTTOM:
+            createHoleRightBottom(hpi,hole)
+        elif hole.HolePositionType == HoleType.LEFTBOTTOM:
+            createHoleLeftBottom(hpi,hole)
+        elif hole.HolePositionType == HoleType.LEFTTOP:
+            createHoleLeftTop(hpi,hole)
+        elif hole.HolePositionType == HoleType.TOP:
+            createHoleTop(hpi,hole)
+        elif hole.HolePositionType == HoleType.RIGHT:
+            createHoleRight(hpi,hole)
+        elif hole.HolePositionType == HoleType.BOTTOM:
+            createHoleBottom(hpi,hole)
+        elif hole.HolePositionType == HoleType.LEFT:
+            createHoleLeft(hpi,hole)
+        
+        hpi.ObjectNumber += 1
 
 def paintSketch(sketch, definition, position):
     sketch.Support = (document.getObject('XZ_Plane'),[''])
@@ -100,8 +258,8 @@ def paintSketch(sketch, definition, position):
     sketch.addConstraint(Sketcher.Constraint('Coincident',5,1,4,2)) 
     sketch.addConstraint(Sketcher.Constraint('Coincident',5,2,0,1)) 
 
-    sketch.AttachmentOffset.Base.x = position.x
-    sketch.AttachmentOffset.Base.z = position.z
+    sketch.AttachmentOffset.Base.x = position.X
+    sketch.AttachmentOffset.Base.z = position.Z
 
 def createGroove(number):
     grooveName = generateGrooveName(number)
