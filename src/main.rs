@@ -245,8 +245,14 @@ fn insert_hole(i:i32, x: f64, hole_distance: f64, distance_from_edge: f64, dista
     }
 }
 
+fn round_two_places(number: f64) -> f64 {
+    (number * 100.0).round() / 100.0
+}
+
 fn compute_insert_holes(x: f64, z: f64, i: i32, j: i32, quadrants: Quadrants, holes: &mut Vec<HolePosition>) {
-    let hole_position = HolePosition::new(x,z);
+    let x_rounded = round_two_places(x);
+    let z_rounded = round_two_places(z);
+    let hole_position = HolePosition::new(x_rounded,z_rounded);
     let mut mirrored_opt = None;
     let mut rotated_opt = None;
     if i == j {           
@@ -332,8 +338,11 @@ fn main() -> Result<(),Box<dyn Error>> {
 
     writeln!(line_writer, "{}", basic_hole_definition)?;
 
-    for hp in holes.iter().enumerate() {
-        writeln!(line_writer,"holeList.append(({},{}))",hp.0, hp.1)?;
+    let mut debug_line_writer = create_line_writer(String::from("cords.csv"))?;
+
+    for hp in holes.iter() {
+        writeln!(debug_line_writer,"{},{}",hp.x, hp.z)?;
+        writeln!(line_writer,"holeList.append({})",hp)?;
     }
 
     let second_part_file = load_file_content(config.second_part_of_macro_file)?;
