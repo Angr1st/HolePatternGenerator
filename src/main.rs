@@ -3,7 +3,7 @@ use std::{fs::File, io::{BufReader, LineWriter, Write, BufRead}, path::Path, err
 use clap::{Parser, command, ValueEnum};
 use serde::{Serialize, Deserialize};
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Quadrants {
     One = 1,
     Two = 2,
@@ -13,7 +13,7 @@ enum Quadrants {
 
 impl Quadrants {
     fn determine(x: f64, z: f64) -> Option<Quadrants> {
-        if x > 0.0 && z >= 0.0 {
+        if x >= 0.0 && z >= 0.0 {
             Some(Quadrants::One)
         }
         else if x <= 0.0 && z > 0.0 {
@@ -28,6 +28,35 @@ impl Quadrants {
         else {
             None
         }
+    }
+}
+
+#[cfg(test)]
+mod quadrants_tests {
+    use crate::Quadrants;
+
+    #[test]
+    fn first_quadrant() {
+        let quadrant_opt = Quadrants::determine(0.0, 0.0);
+        assert_eq!(quadrant_opt, Some(Quadrants::One))
+    }
+
+    #[test]
+    fn second_quadrant() {
+        let quadrant_opt = Quadrants::determine(0.0, 1.0);
+        assert_eq!(quadrant_opt, Some(Quadrants::Two))
+    }
+
+    #[test]
+    fn third_quadrant() {
+        let quadrant_opt = Quadrants::determine(1.0, 1.0);
+        assert_eq!(quadrant_opt, Some(Quadrants::Three))
+    }
+
+    #[test]
+    fn fourth_quadrant() {
+        let quadrant_opt = Quadrants::determine(-1.0, -1.0);
+        assert_eq!(quadrant_opt, Some(Quadrants::Four))
     }
 }
 
@@ -311,8 +340,8 @@ fn main() -> Result<(),Box<dyn Error>> {
         let x = i as f64 * hole_distance;
         //calculate the distance to the edge of the circle at this x height
         //arccos(x/r) = radiants (Angle) -> radius * sin(angle)
-        let angle_from_center = (x / plate_radius).acos();
-        let distance_to_edge = (angle_from_center).sin() * plate_radius;
+        let angle_from_center = (x / padded_plate_radius).acos();
+        let distance_to_edge = (angle_from_center).sin() * padded_plate_radius;
 
         println!("Angle from Center in radiants: {}; Distance to edge at x: {} is {}", angle_from_center, x, distance_to_edge);
 
