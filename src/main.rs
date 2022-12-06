@@ -13,16 +13,20 @@ enum Quadrants {
 
 impl Quadrants {
     fn determine(x: f64, z: f64) -> Option<Quadrants> {
+        // x 0 -> n && z 0 -> n
         if x >= 0.0 && z >= 0.0 {
             Some(Quadrants::One)
         }
-        else if x <= 0.0 && z > 0.0 {
+        // x -0.1 -> -n & z 0.1 -> n
+        else if x < 0.0 && z > 0.0 {
             Some(Quadrants::Two)
         }
-        else if x < 0.0 && z <= 0.0 {
+        // x -0.1 -> -n & z -0.1 -> -n
+        else if x <= 0.0 && z <= 0.0 {
             Some(Quadrants::Three)
         }
-        else if x >= 0.0 && z < 0.0 {
+        // x 0.1 -> n & z -0.1 -> -n
+        else if x > 0.0 && z < 0.0 {
             Some(Quadrants::Four)
         }
         else {
@@ -37,25 +41,43 @@ mod quadrants_tests {
 
     #[test]
     fn first_quadrant() {
+        let quadrant_opt = Quadrants::determine(1.0, 1.0);
+        assert_eq!(quadrant_opt, Some(Quadrants::One))
+    }
+
+    #[test]
+    fn first_quadrant_both_zero() {
         let quadrant_opt = Quadrants::determine(0.0, 0.0);
         assert_eq!(quadrant_opt, Some(Quadrants::One))
     }
 
     #[test]
+    fn first_quadrant_one_zero() {
+        let quadrant_opt = Quadrants::determine(1.0, 0.0);
+        assert_eq!(quadrant_opt, Some(Quadrants::One))
+    }
+
+    #[test]
     fn second_quadrant() {
-        let quadrant_opt = Quadrants::determine(0.0, 1.0);
+        let quadrant_opt = Quadrants::determine(-1.0, 1.0);
         assert_eq!(quadrant_opt, Some(Quadrants::Two))
     }
 
     #[test]
     fn third_quadrant() {
-        let quadrant_opt = Quadrants::determine(1.0, 1.0);
+        let quadrant_opt = Quadrants::determine(-1.0, -1.0);
+        assert_eq!(quadrant_opt, Some(Quadrants::Three))
+    }
+
+    #[test]
+    fn third_quadrant_one_minus() {
+        let quadrant_opt = Quadrants::determine(-1.0, 0.0);
         assert_eq!(quadrant_opt, Some(Quadrants::Three))
     }
 
     #[test]
     fn fourth_quadrant() {
-        let quadrant_opt = Quadrants::determine(-1.0, -1.0);
+        let quadrant_opt = Quadrants::determine(1.0, -1.0);
         assert_eq!(quadrant_opt, Some(Quadrants::Four))
     }
 }
@@ -234,6 +256,16 @@ fn read_config_from_file<P: AsRef<Path>>(path: P) -> Result<Config, Box<dyn Erro
     Ok(u)
 }
 
+fn check_quadrant(hole_position: HolePosition, quadrant_setting:Quadrants) -> Option<HolePosition> {
+    if let Some(quadrant) = hole_position.get_hole_quadrant() {
+        if quadrant <= quadrant_setting {
+            return Some(hole_position);
+        }
+    }
+    
+    return None;
+}
+
 fn quadrants_check(hole_position: &HolePosition, quadrant_setting:Quadrants, hole_replication_method: HoleReplicationMethod) -> Option<HolePosition> {
     let new_hole_opt = match hole_replication_method {
         HoleReplicationMethod::Mirror => hole_position.mirror(),
@@ -292,7 +324,9 @@ fn compute_insert_holes(x: f64, z: f64, i: i32, j: i32, quadrants: Quadrants, ho
     }
     let mirrored_x_opt = quadrants_check(&hole_position, quadrants, HoleReplicationMethod::MirrorX);
     let mirrored_x_rotated_opt = quadrants_check(&hole_position, quadrants, HoleReplicationMethod::MirrorXRotate);
-    holes.push(hole_position);
+    if let Some(some_hole_position) = check_quadrant(hole_position, quadrants) {
+        holes.push(some_hole_position);
+    }
     if let Some(mirrored) = mirrored_opt {
         holes.push(mirrored);
     }
