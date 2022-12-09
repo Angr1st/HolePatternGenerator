@@ -157,14 +157,13 @@ enum HoleReplicationMethod {
 struct DistanceToEdge {
     iteration:i32,
     hole_distance:f64,
-    distance_to_edge:f64,
     distance_to_edge_minus_padding:f64
 }
 
 impl DistanceToEdge {
     fn new(iteration:i32, hole_distance:f64, distance_to_edge:f64, hole_radius: f64) -> DistanceToEdge {
         let distance_to_edge_minus_padding = distance_to_edge - hole_radius;
-        DistanceToEdge { iteration, hole_distance, distance_to_edge, distance_to_edge_minus_padding }
+        DistanceToEdge { iteration, hole_distance, distance_to_edge_minus_padding }
     }
 }
 
