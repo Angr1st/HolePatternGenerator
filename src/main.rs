@@ -98,7 +98,6 @@ struct Config {
     hole_diameter:f64,
     plate_diameter:f64,
     distance_from_edge:f64,
-    padding_distance_from_edge:f64,
     target_file_name:String,
     first_part_of_macro_file: String,
     second_part_of_macro_file: String
@@ -152,6 +151,19 @@ enum HoleReplicationMethod {
     MirrorX,
     MirrorXRotate,
     Rotate
+}
+
+#[derive(Clone,Debug)]
+struct DistanceToEdge {
+    iteration:i32,
+    hole_distance:f64,
+    distance_to_edge:f64
+}
+
+impl DistanceToEdge {
+    fn new(iteration:i32, hole_distance:f64, distance_to_edge:f64) -> DistanceToEdge {
+        DistanceToEdge { iteration, hole_distance, distance_to_edge }
+    }
 }
 
 #[derive(Clone)]
@@ -283,25 +295,27 @@ fn quadrants_check(hole_position: &HolePosition, quadrant_setting:Quadrants, hol
     return None;
 }
 
-fn insert_hole(i:i32, x: f64, hole_distance: f64, distance_from_edge: f64, distance_to_edge: f64, holes: &mut Vec<HolePosition>, quadrants:Quadrants) {
-    if i == 0 {
+fn insert_hole(distance: &DistanceToEdge, hole_distance: f64, distance_from_edge: f64, holes: &mut Vec<HolePosition>, distances : &Vec<DistanceToEdge>, quadrants:Quadrants) {
+    if distance.iteration == 0 {
         holes.push(HolePosition::create_center());
         return;
     }
     
-    for j in 0..=i {
+    let padded_distance_to_edge = distance.distance_to_edge - distance_from_edge;
+
+    for j in 0..=distance.iteration {
         let z = j as f64 * hole_distance;
         //x is the hole position 
         //distance from edge is the minimum distance from the edge for a hole central point
         //distance_to_edge is the distance to the edge of the cirle at this x height
-        if z - distance_from_edge > distance_to_edge {
+        if z  > padded_distance_to_edge {
             return;
         }
 
-        compute_insert_holes(x, z, i, j, quadrants, holes);
+        compute_insert_holes(distance.hole_distance, z, distance.iteration, j, quadrants, holes);
 
-        if j != 0 && j != i {
-            compute_insert_holes(x, -z, i, j, quadrants, holes);
+        if j != 0 && j != distance.iteration {
+            compute_insert_holes(distance.hole_distance, -z, distance.iteration, j, quadrants, holes);
         }
     }
 }
@@ -352,6 +366,24 @@ fn load_file_content(file_name:String) -> Result<BufReader<File>,Box<dyn Error>>
     Ok(BufReader::new(file))
 }
 
+fn compute_distance_to_edge(plate_radius: f64, hole_distance: f64, hole_amount: i32) -> Vec<DistanceToEdge> {
+    let mut collection = Vec::new();
+    
+    for i in 0..=hole_amount {
+        let x = i as f64 * hole_distance;
+        //calculate the distance to the edge of the circle at this x height
+        //arccos(x/r) = radiants (Angle) -> radius * sin(angle)
+        let angle_from_center = (x / plate_radius).acos();
+        let distance_to_edge = (angle_from_center).sin() * plate_radius;
+
+        println!("Angle from Center in radiants: {}; Distance to edge at x: {} is {}", angle_from_center, x, distance_to_edge);
+
+        collection.push(DistanceToEdge::new(i,x,distance_to_edge));
+    }
+
+    return collection;
+}
+
 fn main() -> Result<(),Box<dyn Error>> {
     let cli = Cli::parse();
 
@@ -361,8 +393,12 @@ fn main() -> Result<(),Box<dyn Error>> {
 
     //Calculate radius of plate 29
     let plate_radius = config.plate_diameter / 2.0;
+    //Calculate hole radius
+    let hole_radius:f64 = config.hole_diameter / 2.0;
+    //Calculate the distance from edge plus one hole radius
+    let distance_from_edge_plus_hole_radius = config.distance_from_edge + hole_radius;
     //and subtract the distance from the edege 28.15
-    let padded_plate_radius = plate_radius - config.padding_distance_from_edge;
+    let padded_plate_radius = plate_radius - config.distance_from_edge;
     //compute distance between 2 holes center points
     let hole_distance = config.hole_distance + config.hole_diameter;
     //compute the amount of holes 
@@ -370,16 +406,10 @@ fn main() -> Result<(),Box<dyn Error>> {
 
     let r_max_hole_amount = max_hole_amount.floor() as i32;
 
-    for i in 0..=r_max_hole_amount {
-        let x = i as f64 * hole_distance;
-        //calculate the distance to the edge of the circle at this x height
-        //arccos(x/r) = radiants (Angle) -> radius * sin(angle)
-        let angle_from_center = (x / padded_plate_radius).acos();
-        let distance_to_edge = (angle_from_center).sin() * padded_plate_radius;
+    let distances_to_edge = compute_distance_to_edge(plate_radius, hole_distance, r_max_hole_amount);
 
-        println!("Angle from Center in radiants: {}; Distance to edge at x: {} is {}", angle_from_center, x, distance_to_edge);
-
-        insert_hole(i, x, hole_distance,config.distance_from_edge,distance_to_edge, &mut holes, cli.quadrants);
+    for distance in distances_to_edge {
+        insert_hole(distance.iteration, distance.hole_distance, hole_distance, distance_from_edge_plus_hole_radius,distance.distance_to_edge, &mut holes, cli.quadrants);
     }
 
     let mut line_writer = create_line_writer(config.target_file_name)?;
