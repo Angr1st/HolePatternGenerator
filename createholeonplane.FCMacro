@@ -1,0 +1,294 @@
+# -*- coding: utf-8 -*-
+
+# Macro Begin: C:\Users\Torben\source\repos\Rust\hole_pattern_generator\createholeonplane.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
+import FreeCAD
+import PartDesign
+import PartDesignGui
+import Sketcher
+
+# Gui.runCommand('Std_DlgMacroRecord',0)
+# Gui.runCommand('PartDesign_NewSketch',0)
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Origin.XY_Plane.')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').newObject('Sketcher::SketchObject','Sketch')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').Support = (App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('XY_Plane'),[''])
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').MapMode = 'FlatFace'
+App.ActiveDocument.recompute()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 0, 'Sketch.')
+# import Show
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+# tv = Show.TempoVis(App.ActiveDocument, tag= ActiveSketch.ViewObject.TypeId)
+# ActiveSketch.ViewObject.TempoVis = tv
+# if ActiveSketch.ViewObject.EditingWorkbench:
+#   tv.activateWorkbench(ActiveSketch.ViewObject.EditingWorkbench)
+# if ActiveSketch.ViewObject.HideDependent:
+#   tv.hide(tv.get_all_dependent(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 'Sketch.'))
+# if ActiveSketch.ViewObject.ShowSupport:
+#   tv.show([ref[0] for ref in ActiveSketch.Support if not ref[0].isDerivedFrom("PartDesign::Plane")])
+# if ActiveSketch.ViewObject.ShowLinks:
+#   tv.show([ref[0] for ref in ActiveSketch.ExternalGeometry])
+# tv.sketchClipPlane(ActiveSketch, ActiveSketch.ViewObject.SectionView)
+# tv.hide(ActiveSketch)
+# del(tv)
+# del(ActiveSketch)
+# 
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+# if ActiveSketch.ViewObject.RestoreCamera:
+#   ActiveSketch.ViewObject.TempoVis.saveCamera()
+#   if ActiveSketch.ViewObject.ForceOrtho:
+#     ActiveSketch.ViewObject.Document.ActiveView.setCameraType('Orthographic')
+# 
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),0.998513),False)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').addConstraint(Sketcher.Constraint('Coincident',0,3,-1,1)) 
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Edge1',0.933721,0.351182,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').addConstraint(Sketcher.Constraint('Diameter',0,1.997026)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').setDatum(1,App.Units.Quantity('58.000000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').addGeometry(Part.Circle(App.Vector(-4.981536,3.609473,0),App.Vector(0,0,1),2.943276),False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Edge2',-2.08706,3.10643,0.008,False)
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex2',-4.98154,3.60947,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceX
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').addConstraint(Sketcher.Constraint('DistanceX',1,3,0,3,4.981536)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').setDatum(2,App.Units.Quantity('5.000000 mm'))
+### End command Sketcher_ConstrainDistanceX
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex2',-5,3.60947,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceY
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').addConstraint(Sketcher.Constraint('DistanceY',0,3,1,3,3.609473)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').setDatum(3,App.Units.Quantity('5.000000 mm'))
+### End command Sketcher_ConstrainDistanceY
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Edge2',-2.06778,5.17568,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').addConstraint(Sketcher.Constraint('Diameter',1,5.886552)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').setDatum(4,App.Units.Quantity('0.300000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').resetEdit()
+App.ActiveDocument.recompute()
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+# tv = ActiveSketch.ViewObject.TempoVis
+# if tv:
+#   tv.restore()
+# ActiveSketch.ViewObject.TempoVis = None
+# del(tv)
+# del(ActiveSketch)
+# 
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').recompute()
+# Gui.runCommand('PartDesign_NewSketch',0)
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Origin.XY_Plane.')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').newObject('Sketcher::SketchObject','Sketch001')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').Support = (App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('XY_Plane'),[''])
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').MapMode = 'FlatFace'
+App.ActiveDocument.recompute()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 0, 'Sketch001.')
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001')
+# tv = Show.TempoVis(App.ActiveDocument, tag= ActiveSketch.ViewObject.TypeId)
+# ActiveSketch.ViewObject.TempoVis = tv
+# if ActiveSketch.ViewObject.EditingWorkbench:
+#   tv.activateWorkbench(ActiveSketch.ViewObject.EditingWorkbench)
+# if ActiveSketch.ViewObject.HideDependent:
+#   tv.hide(tv.get_all_dependent(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 'Sketch001.'))
+# if ActiveSketch.ViewObject.ShowSupport:
+#   tv.show([ref[0] for ref in ActiveSketch.Support if not ref[0].isDerivedFrom("PartDesign::Plane")])
+# if ActiveSketch.ViewObject.ShowLinks:
+#   tv.show([ref[0] for ref in ActiveSketch.ExternalGeometry])
+# tv.sketchClipPlane(ActiveSketch, ActiveSketch.ViewObject.SectionView)
+# tv.hide(ActiveSketch)
+# del(tv)
+# del(ActiveSketch)
+# 
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001')
+# if ActiveSketch.ViewObject.RestoreCamera:
+#   ActiveSketch.ViewObject.TempoVis.saveCamera()
+#   if ActiveSketch.ViewObject.ForceOrtho:
+#     ActiveSketch.ViewObject.Document.ActiveView.setCameraType('Orthographic')
+# 
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),29.121788),False)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').addConstraint(Sketcher.Constraint('Coincident',0,3,-1,1)) 
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.Edge1',27.6433,8.9768,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').addConstraint(Sketcher.Constraint('Diameter',0,58.243576)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').setDatum(1,App.Units.Quantity('58.000000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').addGeometry(Part.Circle(App.Vector(-4.652201,4.693137,0),App.Vector(0,0,1),2.651268),False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.Vertex2',-4.6522,4.69314,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceX
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').addConstraint(Sketcher.Constraint('DistanceX',1,3,0,3,4.652201)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').setDatum(2,App.Units.Quantity('5.000000 mm'))
+### End command Sketcher_ConstrainDistanceX
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.Vertex2',-5,4.69314,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceY
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').addConstraint(Sketcher.Constraint('DistanceY',0,3,1,3,4.693137)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').setDatum(3,App.Units.Quantity('5.000000 mm'))
+### End command Sketcher_ConstrainDistanceY
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.Edge2',-2.67668,6.27726,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').addConstraint(Sketcher.Constraint('Diameter',1,5.302536)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').setDatum(4,App.Units.Quantity('0.300000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').resetEdit()
+App.ActiveDocument.recompute()
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001')
+# tv = ActiveSketch.ViewObject.TempoVis
+# if tv:
+#   tv.restore()
+# ActiveSketch.ViewObject.TempoVis = None
+# del(tv)
+# del(ActiveSketch)
+# 
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').recompute()
+FreeCAD.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').AttachmentOffset = App.Placement(App.Vector(0.00,0.00,0.70),App.Rotation(App.Vector(0.00,0.00,1.00),0.00))
+
+FreeCAD.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').AttachmentOffset = App.Placement(App.Vector(0.00,0.00,0.75),App.Rotation(App.Vector(0.00,0.00,1.00),0.00))
+
+# Gui.Selection.clearSelection()
+# Gui.runCommand('PartDesign_NewSketch',0)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Origin.XY_Plane.')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').newObject('Sketcher::SketchObject','Sketch002')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').Support = (App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('XY_Plane'),[''])
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').MapMode = 'FlatFace'
+App.ActiveDocument.recompute()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 0, 'Sketch002.')
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002')
+# tv = Show.TempoVis(App.ActiveDocument, tag= ActiveSketch.ViewObject.TypeId)
+# ActiveSketch.ViewObject.TempoVis = tv
+# if ActiveSketch.ViewObject.EditingWorkbench:
+#   tv.activateWorkbench(ActiveSketch.ViewObject.EditingWorkbench)
+# if ActiveSketch.ViewObject.HideDependent:
+#   tv.hide(tv.get_all_dependent(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 'Sketch002.'))
+# if ActiveSketch.ViewObject.ShowSupport:
+#   tv.show([ref[0] for ref in ActiveSketch.Support if not ref[0].isDerivedFrom("PartDesign::Plane")])
+# if ActiveSketch.ViewObject.ShowLinks:
+#   tv.show([ref[0] for ref in ActiveSketch.ExternalGeometry])
+# tv.sketchClipPlane(ActiveSketch, ActiveSketch.ViewObject.SectionView)
+# tv.hide(ActiveSketch)
+# del(tv)
+# del(ActiveSketch)
+# 
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002')
+# if ActiveSketch.ViewObject.RestoreCamera:
+#   ActiveSketch.ViewObject.TempoVis.saveCamera()
+#   if ActiveSketch.ViewObject.ForceOrtho:
+#     ActiveSketch.ViewObject.Document.ActiveView.setCameraType('Orthographic')
+# 
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),29.186656),False)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').addConstraint(Sketcher.Constraint('Coincident',0,3,-1,1)) 
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.Edge1',28.6169,5.43854,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').addConstraint(Sketcher.Constraint('Diameter',0,58.373312)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').setDatum(1,App.Units.Quantity('58.000000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').addGeometry(Part.Circle(App.Vector(-5.502743,5.004661,0),App.Vector(0,0,1),4.728050),False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.Vertex2',-5.50274,5.00466,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceX
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').addConstraint(Sketcher.Constraint('DistanceX',1,3,0,3,5.502743)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').setDatum(2,App.Units.Quantity('5.000000 mm'))
+### End command Sketcher_ConstrainDistanceX
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.Vertex2',-5,5.00466,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceY
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').addConstraint(Sketcher.Constraint('DistanceY',0,3,1,3,5.004661)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').setDatum(3,App.Units.Quantity('5.000000 mm'))
+### End command Sketcher_ConstrainDistanceY
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.Edge2',-0.361335,5.86571,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').addConstraint(Sketcher.Constraint('Diameter',1,9.456100)) 
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').setDatum(4,App.Units.Quantity('5.000000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.Constraint5',-2.02411,5.77385,0.009,False)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').setDatum(4,App.Units.Quantity('0.500000 mm'))
+# Gui.Selection.clearSelection()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').resetEdit()
+App.ActiveDocument.recompute()
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002')
+# tv = ActiveSketch.ViewObject.TempoVis
+# if tv:
+#   tv.restore()
+# ActiveSketch.ViewObject.TempoVis = None
+# del(tv)
+# del(ActiveSketch)
+# 
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').recompute()
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.')
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.')
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.')
+### Begin command PartDesign_AdditiveLoft
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').newObject('PartDesign::AdditiveLoft','AdditiveLoft')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').Profile = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').Sections += [(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001'), [''])]
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').Sections += [(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002'), [''])]
+App.ActiveDocument.recompute()
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').Visibility = False
+App.ActiveDocument.recompute()
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.ShapeColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'ShapeColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.ShapeColor)
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.LineColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'LineColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.LineColor)
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.PointColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'PointColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.PointColor)
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.Transparency=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'Transparency',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.Transparency)
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.DisplayMode=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'DisplayMode',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.DisplayMode)
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 0, 'AdditiveLoft.')
+# Gui.Selection.clearSelection()
+### End command PartDesign_AdditiveLoft
+# Gui.Selection.clearSelection()
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').recompute()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').resetEdit()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.')
+FreeCAD.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').AttachmentOffset = App.Placement(App.Vector(0.00,0.00,1.00),App.Rotation(App.Vector(0.00,0.00,1.00),0.00))
+
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.')
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch001.')
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch002.')
+### Begin command PartDesign_AdditiveLoft
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').newObject('PartDesign::AdditiveLoft','AdditiveLoft')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').Profile = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').Sections += [(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001'), [''])]
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').Sections += [(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002'), [''])]
+App.ActiveDocument.recompute()
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').Visibility = False
+App.ActiveDocument.recompute()
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.ShapeColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'ShapeColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.ShapeColor)
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.LineColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'LineColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.LineColor)
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.PointColor=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'PointColor',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.PointColor)
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.Transparency=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'Transparency',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.Transparency)
+# App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.DisplayMode=getattr(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').getLinkedObject(True).ViewObject,'DisplayMode',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('AdditiveLoft').ViewObject.DisplayMode)
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 0, 'AdditiveLoft.')
+# Gui.Selection.clearSelection()
+### End command PartDesign_AdditiveLoft
+# Gui.Selection.clearSelection()
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').recompute()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').resetEdit()
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').Visibility = False
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch001').Visibility = False
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch002').Visibility = False
+# Macro End: C:\Users\Torben\source\repos\Rust\hole_pattern_generator\createholeonplane.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++

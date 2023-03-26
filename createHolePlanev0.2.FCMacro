@@ -1,0 +1,120 @@
+# -*- coding: utf-8 -*-
+
+# Macro Begin: C:\Users\Torben\source\repos\Rust\hole_pattern_generator\createHolePlanev0.2.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
+import FreeCAD
+import PartDesign
+import PartDesignGui
+import Sketcher
+
+# Gui.runCommand('Std_DlgMacroRecord',0)
+# Gui.runCommand('PartDesign_NewSketch',0)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Origin.XY_Plane.',-32.5,-24.7486,0)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').newObject('Sketcher::SketchObject','Sketch')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').Support = (App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('XY_Plane'),[''])
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').MapMode = 'FlatFace'
+App.ActiveDocument.recompute()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 0, 'Sketch.')
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+# tv = Show.TempoVis(App.ActiveDocument, tag= ActiveSketch.ViewObject.TypeId)
+# ActiveSketch.ViewObject.TempoVis = tv
+# if ActiveSketch.ViewObject.EditingWorkbench:
+#   tv.activateWorkbench(ActiveSketch.ViewObject.EditingWorkbench)
+# if ActiveSketch.ViewObject.HideDependent:
+#   tv.hide(tv.get_all_dependent(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 'Sketch.'))
+# if ActiveSketch.ViewObject.ShowSupport:
+#   tv.show([ref[0] for ref in ActiveSketch.Support if not ref[0].isDerivedFrom("PartDesign::Plane")])
+# if ActiveSketch.ViewObject.ShowLinks:
+#   tv.show([ref[0] for ref in ActiveSketch.ExternalGeometry])
+# tv.sketchClipPlane(ActiveSketch, ActiveSketch.ViewObject.SectionView)
+# tv.hide(ActiveSketch)
+# del(tv)
+# del(ActiveSketch)
+# 
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+# if ActiveSketch.ViewObject.RestoreCamera:
+#   ActiveSketch.ViewObject.TempoVis.saveCamera()
+#   if ActiveSketch.ViewObject.ForceOrtho:
+#     ActiveSketch.ViewObject.Document.ActiveView.setCameraType('Orthographic')
+# Hole Creation Order: Middle, Left, Left-Top, Top, Top-Right, Right, Right-Bottom, Bottom, Bottom-Left
+# Outer Circle
+sketch.addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),2.394623),False)
+sketch.addConstraint(Sketcher.Constraint('Coincident',0,3,-1,1)) 
+sketch.addConstraint(Sketcher.Constraint('Diameter',0,4.789246)) 
+sketch.setDatum(1,App.Units.Quantity('58.000000 mm'))
+
+# Middle Hole
+sketch.addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),0.719121),False)
+sketch.addConstraint(Sketcher.Constraint('Coincident',1,3,0,3)) 
+sketch.addConstraint(Sketcher.Constraint('Diameter',1,1.438242)) 
+sketch.setDatum(3,App.Units.Quantity('0.300000 mm'))
+
+# Left Hole
+sketch.addGeometry(Part.Circle(App.Vector(-0.903611,0.001554,0),App.Vector(0,0,1),0.104209),False)
+sketch.addConstraint(Sketcher.Constraint('PointOnObject',2,3,-1)) 
+sketch.addConstraint(Sketcher.Constraint('Diameter',2,0.208418)) 
+sketch.setDatum(5,App.Units.Quantity('0.300000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceX',2,3,0,3,0.903611)) 
+sketch.setDatum(6,App.Units.Quantity('1.000000 mm'))
+sketch.renameConstraint(6, u'Left')
+
+# Left-Top Hole
+sketch.addGeometry(Part.Circle(App.Vector(-0.647308,0.643353,0),App.Vector(0,0,1),0.140588),False)
+sketch.addConstraint(Sketcher.Constraint('Diameter',3,0.281176)) 
+sketch.setDatum(7,App.Units.Quantity('0.300000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceX',3,3,0,3,0.647308)) 
+sketch.setDatum(8,App.Units.Quantity('1.000000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,3,3,0.643353)) 
+sketch.setDatum(9,App.Units.Quantity('1.000000 mm'))
+
+# Top Hole
+sketch.addGeometry(Part.Circle(App.Vector(-0.006343,1.042262,0),App.Vector(0,0,1),0.179877),False)
+sketch.addConstraint(Sketcher.Constraint('PointOnObject',4,3,-2)) 
+sketch.addConstraint(Sketcher.Constraint('Diameter',4,0.359754)) 
+sketch.setDatum(11,App.Units.Quantity('0.300000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,4,3,1.042262)) 
+sketch.setDatum(12,App.Units.Quantity('1.000000 mm'))
+sketch.renameConstraint(12, u'Top')
+
+# Top-Right Hole
+sketch.addGeometry(Part.Circle(App.Vector(1.017571,0.952324,0),App.Vector(0,0,1),0.245674),False)
+sketch.addConstraint(Sketcher.Constraint('Diameter',5,0.491348)) 
+sketch.setDatum(13,App.Units.Quantity('0.300000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceX',0,3,5,3,1.017571)) 
+sketch.setDatum(14,App.Units.Quantity('1.000000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,5,3,0.952324)) 
+sketch.setDatum(15,App.Units.Quantity('1.000000 mm'))
+
+# Right Hole
+sketch.addGeometry(Part.Circle(App.Vector(0.976061,-0.016243,0),App.Vector(0,0,1),0.271319),False)
+sketch.addConstraint(Sketcher.Constraint('PointOnObject',6,3,-1)) 
+sketch.addConstraint(Sketcher.Constraint('Diameter',6,0.542638)) 
+sketch.setDatum(17,App.Units.Quantity('0.300000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceX',0,3,6,3,0.976061)) 
+sketch.setDatum(18,App.Units.Quantity('1.000000 mm'))
+sketch.renameConstraint(18, u'Right')
+
+# Right-Bottom Hole
+sketch.addGeometry(Part.Circle(App.Vector(0.982979,-0.957137,0),App.Vector(0,0,1),0.179877),False)
+sketch.addConstraint(Sketcher.Constraint('Diameter',7,0.359754)) 
+sketch.setDatum(19,App.Units.Quantity('0.300000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceY',7,3,0,3,0.957137)) 
+sketch.setDatum(20,App.Units.Quantity('1.000000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceX',0,3,7,3,0.982979)) 
+sketch.setDatum(21,App.Units.Quantity('1.000000 mm'))
+
+# Bottom Hole
+sketch.addGeometry(Part.Circle(App.Vector(-0.006343,-1.012484,0),App.Vector(0,0,1),0.196899),False)
+sketch.addConstraint(Sketcher.Constraint('PointOnObject',8,3,-2)) 
+sketch.addConstraint(Sketcher.Constraint('Diameter',8,0.393798)) 
+sketch.setDatum(23,App.Units.Quantity('0.300000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceY',8,3,0,3,1.012484)) 
+sketch.setDatum(24,App.Units.Quantity('1.000000 mm'))
+
+# Bottom-Left Hole
+sketch.addGeometry(Part.Circle(App.Vector(-1.044094,-0.991729,0),App.Vector(0,0,1),0.179877),False)
+sketch.addConstraint(Sketcher.Constraint('Diameter',9,0.359754)) 
+sketch.setDatum(25,App.Units.Quantity('0.300000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceY',9,3,0,3,0.991729)) 
+sketch.setDatum(26,App.Units.Quantity('1.000000 mm'))
+sketch.addConstraint(Sketcher.Constraint('DistanceX',9,3,0,3,1.044094)) 
+sketch.setDatum(27,App.Units.Quantity('1.000000 mm'))

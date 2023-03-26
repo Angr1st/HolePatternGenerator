@@ -1,0 +1,99 @@
+# -*- coding: utf-8 -*-
+
+# Macro Begin: C:\Users\Torben\source\repos\Rust\hole_pattern_generator\createHoleAsPlanev0.1.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
+import FreeCAD
+import PartDesign
+import PartDesignGui
+import Sketcher
+
+# Gui.runCommand('Std_DlgMacroRecord',0)
+### Begin command PartDesign_NewSketch
+Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').ActiveView.setActiveObject('pdbody',App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'),'')
+### End command PartDesign_NewSketch
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Origin.XY_Plane.',-25.6876,30.8175,-9.23706e-15)
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body').newObject('Sketcher::SketchObject','Sketch')
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').Support = (App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('XY_Plane'),[''])
+App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch').MapMode = 'FlatFace'
+App.ActiveDocument.recompute()
+# Gui.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').setEdit(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 0, 'Sketch.')
+# import Show
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+# tv = Show.TempoVis(App.ActiveDocument, tag= ActiveSketch.ViewObject.TypeId)
+# ActiveSketch.ViewObject.TempoVis = tv
+# if ActiveSketch.ViewObject.EditingWorkbench:
+#   tv.activateWorkbench(ActiveSketch.ViewObject.EditingWorkbench)
+# if ActiveSketch.ViewObject.HideDependent:
+#   tv.hide(tv.get_all_dependent(App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Body'), 'Sketch.'))
+# if ActiveSketch.ViewObject.ShowSupport:
+#   tv.show([ref[0] for ref in ActiveSketch.Support if not ref[0].isDerivedFrom("PartDesign::Plane")])
+# if ActiveSketch.ViewObject.ShowLinks:
+#   tv.show([ref[0] for ref in ActiveSketch.ExternalGeometry])
+# tv.sketchClipPlane(ActiveSketch, ActiveSketch.ViewObject.SectionView)
+# tv.hide(ActiveSketch)
+# del(tv)
+# del(ActiveSketch)
+# 
+# ActiveSketch = App.getDocument('unifilter_lellit_anna_57mm_hole_pattern_v2').getObject('Sketch')
+# if ActiveSketch.ViewObject.RestoreCamera:
+#   ActiveSketch.ViewObject.TempoVis.saveCamera()
+#   if ActiveSketch.ViewObject.ForceOrtho:
+#     ActiveSketch.ViewObject.Document.ActiveView.setCameraType('Orthographic')
+# 
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+sketch.addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),12.793616),False)
+sketch.addConstraint(Sketcher.Constraint('Coincident',0,3,-1,1)) 
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Edge1',10.3639,7.49847,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+sketch.addConstraint(Sketcher.Constraint('Diameter',0,25.587232)) 
+sketch.setDatum(1,App.Units.Quantity('58.000000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+sketch.addGeometry(Part.Circle(App.Vector(0.000000,0.000000,0),App.Vector(0,0,1),0.305318),False)
+sketch.addConstraint(Sketcher.Constraint('Coincident',1,3,0,3)) 
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Edge2',0.194617,0.235252,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+sketch.addConstraint(Sketcher.Constraint('Diameter',1,0.610636)) 
+sketch.setDatum(3,App.Units.Quantity('0.300000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+sketch.addGeometry(Part.Circle(App.Vector(-2.199591,1.089960,0),App.Vector(0,0,1),0.181993),False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex3',-2.19959,1.08996,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceX
+sketch.addConstraint(Sketcher.Constraint('DistanceX',2,3,0,3,2.199591)) 
+sketch.setDatum(4,App.Units.Quantity('0.750000 mm'))
+### End command Sketcher_ConstrainDistanceX
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex3',-0.75,1.08996,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceY
+sketch.addConstraint(Sketcher.Constraint('DistanceY',0,3,2,3,1.089960)) 
+sketch.setDatum(5,App.Units.Quantity('0.750000 mm'))
+### End command Sketcher_ConstrainDistanceY
+# Gui.Selection.clearSelection()
+# Gui.runCommand('Sketcher_CompCreateCircle',0)
+sketch.addGeometry(Part.Circle(App.Vector(1.049806,-0.419927,0),App.Vector(0,0,1),0.414466),False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Edge4',1.46381,-0.412642,0.008,False)
+### Begin command Sketcher_CompConstrainRadDia
+sketch.addConstraint(Sketcher.Constraint('Diameter',3,0.828932)) 
+sketch.setDatum(6,App.Units.Quantity('0.300000 mm'))
+### End command Sketcher_CompConstrainRadDia
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex4',1.04981,-0.419927,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceX
+sketch.addConstraint(Sketcher.Constraint('DistanceX',0,3,3,3,1.049806)) 
+sketch.setDatum(7,App.Units.Quantity('0.850000 mm'))
+### End command Sketcher_ConstrainDistanceX
+# Gui.Selection.clearSelection()
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex4',0.85,-0.419927,0.012,False)
+# Gui.Selection.addSelection('unifilter_lellit_anna_57mm_hole_pattern_v2','Body','Sketch.Vertex1',0,0,0.012,False)
+### Begin command Sketcher_ConstrainDistanceY
+sketch.addConstraint(Sketcher.Constraint('DistanceY',3,3,0,3,0.419927)) 
+sketch.setDatum(8,App.Units.Quantity('0.900000 mm'))
+### End command Sketcher_ConstrainDistanceY
+# Gui.Selection.clearSelection()
+# Macro End: C:\Users\Torben\source\repos\Rust\hole_pattern_generator\createHoleAsPlanev0.1.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
